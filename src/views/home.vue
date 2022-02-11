@@ -1,24 +1,41 @@
 <template>
-  <h1>{{ msg }}</h1>
-
-  {{ receiveMessage }}
-
-  <a-space>
-    <a-button type="primary" @click="count++">count is: {{ count }}</a-button>
-    <a-button type="primary" @click="sendMessage">通讯</a-button>
-  </a-space>
-  <p>
-    Edit
-    <code>components/HelloWorld.vue</code> to test hot module replacement.
-  </p>
-
+  <a-layout class="app-page-layout">
+    <a-layout-sider class="app-page-sider">
+      <dir-tree :dirs="dirs" @treeSelected="treeSelectedHandler"></dir-tree>
+    </a-layout-sider>
+    <a-layout-content class="app-page-content">
+      <a-table :data="tableData" :bordered="false" :pagination="false">
+        <template #columns>
+          <a-table-column title="名称" data-index="title"></a-table-column>
+          <a-table-column title="修改日期">
+            <template #cell="{ record }">
+              {{formatTime(record.stats.mtime)}}
+            </template>
+          </a-table-column>
+          <a-table-column title="类型">
+            <template #cell="{ record }">
+              {{formatType(record.info.ext)}}
+            </template>
+          </a-table-column>
+          <a-table-column title="大小">
+            <template #cell="{ record }">
+              {{formatSize(record.stats.size)}}
+            </template>
+          </a-table-column>
+        </template>
+      </a-table>
+    </a-layout-content>
+  </a-layout>
 </template>
 <script>
-import { ref } from 'vue'
-
-const { ipcRenderer } = window
+import { ref, getCurrentInstance } from 'vue'
+import { useStore } from 'vuex'
+import dirTree from '../components/dir-tree/index.vue'
 
 export default {
+  components: {
+    dirTree
+  },
   props: {
     msg: {
       type: String,
@@ -26,23 +43,44 @@ export default {
     }
   },
   setup () {
-    const count = ref(0)
-    const receiveMessage = ref('')
-    ipcRenderer.on('receiveMessage', (event, args)=>{
-      receiveMessage.value = args
+    const app = getCurrentInstance()
+    const store = useStore()
+    const globalProperties = app.appContext.config.globalProperties
+    const formatTime = globalProperties.$formatTime
+    const formatSize = globalProperties.$formatSize
+    const formatType = globalProperties.$formatType
+
+    const dirs = ref([])
+    const tableData = ref([])
+
+    store.dispatch('ipc/sendMessage', {
+      channel: 'ping',
+      msg: 'src'
+    }).then(res => {
+      dirs.value = res
     })
+
+    const treeSelectedHandler = (val) => {
+      store.dispatch('ipc/sendMessage', {
+        channel: 'ping',
+        msg: val[0],
+        options: {
+          traverse: false,
+          includeFile: true
+        }
+      }).then(res => {
+        tableData.value = res
+      })
+    }
+
     return {
-      count,
-      receiveMessage,
-      sendMessage () {
-        ipcRenderer.send('sendMessage', '我是渲染进程')
-      }
+      dirs,
+      treeSelectedHandler,
+      tableData,
+      formatTime,
+      formatSize,
+      formatType
     }
   }
 }
 </script>
-<style scoped>
-a {
-  color: #42b983;
-}
-</style>

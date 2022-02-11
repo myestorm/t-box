@@ -14,7 +14,9 @@
     "electron:make": "electron-forge make"
   },
   "dependencies": {
+    "dayjs": "^1.10.7",
     "electron-squirrel-startup": "^1.0.0",
+    "uuid": "^8.3.2",
     "vue": "^3.2.25",
     "vue-router": "^4.0.12",
     "vuex": "^4.0.2"
