@@ -4,7 +4,7 @@ const { ipcMain } = require('electron')
 
 const _opts = {
   prefix: 'ipcMain/',
-  files: './**/[!index]*.js'
+  files: './**/!(index).js'
 }
 
 module.exports = (options) => {
