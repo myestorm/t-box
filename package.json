@@ -5,7 +5,7 @@
   "main": "app/main.js",
   "author": "wenxue.cwx <coolman_84@163.com> (https://www.totonoo.com)",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "vite build",
     "preview": "vite preview",
     "electron": "electron .",
@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "dayjs": "^1.10.7",
+    "dexie": "^3.2.0",
     "electron-squirrel-startup": "^1.0.0",
     "uuid": "^8.3.2",
     "vue": "^3.2.25",
@@ -22,7 +23,7 @@
     "vuex": "^4.0.2"
   },
   "devDependencies": {
-    "@arco-design/web-vue": "^2.15.1",
+    "@arco-design/web-vue": "^2.17.0",
     "@electron-forge/cli": "^6.0.0-beta.63",
     "@electron-forge/maker-deb": "^6.0.0-beta.63",
     "@electron-forge/maker-rpm": "^6.0.0-beta.63",

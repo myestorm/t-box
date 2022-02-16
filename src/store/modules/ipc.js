@@ -9,7 +9,16 @@ const getters = {}
 const actions = {
   sendMessage (_, params) {
     const { channel, msg, options = {} } = params
-    return ipcRenderer.invoke(prefix + channel, msg, options)
+    return new Promise((resolve, reject) => {
+      ipcRenderer.invoke(prefix + channel, msg, options).then(res => {
+        const code = res.code
+        if (code === 0) {
+          resolve(res.data)
+        } else {
+          reject(res.msg)
+        }
+      })
+    })
   }
 }
 

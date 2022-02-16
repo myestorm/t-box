@@ -1,8 +1,8 @@
 <template>
   <a-layout class="app-layout">
-    <a-layout-header class="app-header">
+    <a-layout-sider class="app-sider">
       <top-menu></top-menu>
-    </a-layout-header>
+    </a-layout-sider>
     <a-layout-content class="app-content">
       <div class="app-box">
         <router-view></router-view>

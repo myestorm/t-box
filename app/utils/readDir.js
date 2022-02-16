@@ -1,5 +1,6 @@
 const path = require('path')
 const fs = require('fs')
+const glob = require('glob')
 
 /**
  * @typedef {Object} FileInfo
@@ -65,7 +66,7 @@ const _options = {
  * @returns {Number}
  */
 const compareFiles = (a, b) => {
-  return b.isDirectory - a.isDirectory || b.title > a.title ? -1 : 1
+  return b.isDirectory - a.isDirectory
 }
 
 /**
@@ -116,6 +117,34 @@ const readDirTree = (rootDir, options, deep = 0, parent = '') => {
   return tree
 }
 
+const findFile = (rootDir, keyword) => {
+  const tree = []
+  const dir = path.isAbsolute(rootDir) ? rootDir : path.resolve(__dirname, '../../' + rootDir)
+  const files = glob.sync(dir + '/**/*@('+ keyword +')*')
+  files.map(file => {
+    const stats = fs.statSync(file)
+    const info = path.parse(file)
+    const relativePath = path.relative(dir, file).split(path.sep)
+    const item = {
+      title: info.base,
+      info: {
+        ...info
+      },
+      relativePath: relativePath.join('/'),
+      realPath: file,
+      isDirectory: stats.isDirectory(),
+      deep: 0,
+      stats: {
+        ...stats
+      }
+    }
+    tree.push(item)
+  })
+  tree.sort(compareFiles)
+  return tree
+}
+
 module.exports = {
-  readDirTree
+  readDirTree,
+  findFile
 }

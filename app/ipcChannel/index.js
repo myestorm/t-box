@@ -4,7 +4,7 @@ const { ipcMain } = require('electron')
 
 const _opts = {
   prefix: 'ipcMain/',
-  files: './**/[!index]*.js'
+  files: './**/!(index).js'
 }
 
 module.exports = (options) => {
@@ -13,6 +13,12 @@ module.exports = (options) => {
   for (const file of files) {
     const filePath = path.resolve(__dirname, file)
     const content = require(filePath)(opts)
-    ipcMain.handle(content.name, content.func)
+    if (Array.isArray(content)) {
+      content.forEach(item => {
+        ipcMain.handle(item.name, item.func)
+      })
+    } else {
+      ipcMain.handle(content.name, content.func)
+    }
   }
 }
