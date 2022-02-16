@@ -54,7 +54,7 @@ export default {
     const tableData = ref([])
 
     store.dispatch('ipc/sendMessage', {
-      channel: 'ping',
+      channel: 'dir',
       msg: 'src'
     }).then(res => {
       dirs.value = res
@@ -62,7 +62,7 @@ export default {
 
     const treeSelectedHandler = (val) => {
       store.dispatch('ipc/sendMessage', {
-        channel: 'ping',
+        channel: 'dir',
         msg: val[0],
         options: {
           traverse: false,
